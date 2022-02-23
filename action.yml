@@ -1,0 +1,220 @@
+name: "Auto Deploy Action"
+description: "Auto deploys new versions of (currently only) node packages from their source repo to various target repos."
+inputs:
+  # Required
+  slug:
+    description: "A GitHub repo slug for the deploy target"
+    required: true
+
+  # Optional
+  args:
+    description: "Additional args to pass into package manager install command"
+    required: false
+  branch:
+    description: "The branch to auto deploy to."
+    required: false
+  deploy:
+    description: "Toggle to disable deploy. Mostly used for testing."
+    required: false
+    default: true
+  manager:
+    description: "The package manager to use."
+    required: false
+    default: yarn
+  package:
+    description: "The name of the package."
+    required: false
+  registry:
+    description: "Where the updated pacakge lives."
+    required: false
+    default: yarn
+  separator:
+    description: "The separator between package and version"
+    required: false
+    default: "@"
+  token:
+    description: "A GitHub personal access token with the entire `repo` permission."
+    required: false
+    default: ${{ github.token }}
+  update:
+    description: "Toggle to disable updating. Mostly used for testing."
+    required: false
+    default: true
+  version:
+    description: "The version of the package."
+    required: false
+
+outputs:
+  branch:
+    description: "The branch to deploy to."
+    value: ${{ steps.auto-deploy-action.outputs.branch }}
+  package:
+    description: "The package name from user or manifest file to auto deploy."
+    value: ${{ steps.auto-deploy-action.outputs.package }}
+  version:
+    description: "The package version from user or manifest file to auto deploy."
+    value: ${{ steps.auto-deploy-action.outputs.version }}
+  separator:
+    description: "The separator between package and version"
+    value: ${{ steps.auto-deploy-action.outputs.separator }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate required input and environment
+      shell: bash
+      run: |
+        echo "::group::Ensure slug is set"
+        if [ "${{ inputs.slug }}" == "" ]; then
+          echo "::error title=Slug is not set!::You must specify a GitHub repo slug in order to run this shit."
+          exit 47
+        fi
+        echo "::endgroup::"
+
+        echo "::group::Ensure ${{ inputs.manager }} is installed"
+        if ! command -v ${{ inputs.manager }} &> /dev/null; then
+          echo "::error title=Package manager does not exist!::You must ensure the underlying package manager ${{ inputs.manager }} is installed."
+          exit 48
+        fi
+        echo "::endgroup::"
+
+    - name: Set outputs
+      shell: bash
+      id: auto-deploy-action
+      run: |
+        echo "::group::Setting outputs"
+        if [ "${{ inputs.package }}" != "" ]; then
+          echo "::set-output name=package::${{ inputs.package }}"
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
+          echo "::set-output name=package::$(node -p "require('./package.json').name")"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=package::${{ github.repository }}"
+        fi
+
+        if [ "${{ inputs.separator }}" != "" ] && [ "${{ inputs.separator }}" != "@" ]; then
+          echo "::set-output name=separator::${{ inputs.separator }}"
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
+          echo "::set-output name=separator::@"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=separator::#"
+        fi
+
+        if [ "${{ inputs.version }}" != "" ]; then
+          echo "::set-output name=version::${{ inputs.version }}"
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
+          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=version::${{ github.ref_name }}"
+        fi
+        echo "::endgroup::"
+
+        # TODO: support other registries: composer, etc
+
+    - name: Validate outputs
+      shell: bash
+      run: |
+        echo "::group::Validating package output"
+        if [ "${{ steps.auto-deploy-action.outputs.package }}" == "" ]; then
+          echo "::error title=Package name is empty!::Package either not set or could not autodetect."
+          exit 10
+        fi
+        echo "::endgroup::"
+
+        echo "::group::Validating version output"
+        if [ "${{ steps.auto-deploy-action.outputs.version }}" == "" ]; then
+          echo "::error title=Version is empty!::Version either not set or could not autodetect."
+          exit 11
+        fi
+        echo "::endgroup::"
+
+    - name: Clone repo
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ inputs.slug }}
+        token: ${{ inputs.token }}
+        path: auto-deploy-action-tmp
+        fetch-depth: 0
+        ref: "${{ inputs.slug == 'lando/auto-deploy-action' && 'main' || '' }}"
+
+    - name: Enter repo
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Validating repo exists in anticipated place"
+        cat .git/HEAD
+        echo "::endgroup::"
+
+    - name: Checkout correct branch
+      if: inputs.branch
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Checking out branch ${{ inputs.branch }}"
+        if git branch --list | grep ${{ inputs.branch }}; then
+          git checkout ${{ inputs.branch }}
+        else
+          git checkout -b ${{ inputs.branch }}
+        fi
+        echo "::endgroup::"
+
+    - name: Update code
+      if: inputs.update == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Updating code with ${{ inputs.manager }}"
+        if [ "${{ inputs.manager }}" == "yarn" ]; then
+          yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+        elif [ "${{ inputs.manager }}" == "npm" ]; then
+          npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+        fi
+        echo "::endgroup::"
+
+    - name: Show changes
+      if: inputs.update == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Show code changes"
+        git diff
+        echo "::endgroup::"
+
+    - name: Commit changes
+      if: inputs.update == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Commit code changes"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add .
+        git commit \
+          -m "AUTODEPLOYED ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}" \
+          --allow-empty
+        echo "::endgroup::"
+
+    - name: Deploy changes
+      if: inputs.deploy == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
+        git push origin $(git rev-parse --abbrev-ref HEAD)
+        echo "::endgroup::"
+
+    - name: Deploy changes (DRY RUN)
+      if: inputs.deploy == 'false'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Deploy dry run ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
+        git push origin $(git rev-parse --abbrev-ref HEAD) --dry-run
+        echo "::endgroup::"
+
+    # step 5: optionally open PR
+
+  # tests we need
+    #
+
+  # Docs things:
+    # Note: user is responsible for having correct tools and versions installed aka yarn on node14

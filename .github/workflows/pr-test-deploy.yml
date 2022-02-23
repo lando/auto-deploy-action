@@ -1,0 +1,32 @@
+name: Test Deploy Cases
+
+on:
+  pull_request:
+
+jobs:
+  test-yarn-update:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        node-version:
+          - '14'
+        auto-deploy-repos:
+          - lando/auto-deploy-action
+    steps:
+      - name: Checkout action code
+        uses: actions/checkout@v2
+      - name: Install node ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Run Auto Deploy Action
+        uses: ./
+        with:
+          # Required props
+          slug: ${{ matrix.auto-deploy-repos }}
+          # Test things
+          registry: github
+          args: --dev
+          deploy: false

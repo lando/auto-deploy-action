@@ -1,0 +1,35 @@
+{
+  "name": "@lando/auto-deploy-action",
+  "description": "A GitHub Action for auto deploying packages from a source repo to various target repo(s).",
+  "version": "1.0.0",
+  "author": "John Ouellet @labboy0276",
+  "contributors": [
+    {
+      "name": "Mike Pirog",
+      "email": "mike@lando.dev"
+    },
+    {
+      "name": "Barney Rubble",
+      "email": "b@rubble.com"
+    }
+  ],
+  "license": "GPL-3.0",
+  "repository": "https://github.com/lando/auto-deploy-action",
+  "bugs": "https://github.com/lando/auto-deploy-action/issues",
+  "homepage": "https://github.com/lando/auto-deploy-action",
+  "keywords": [
+    "lando",
+    "transfer github issue",
+    "Github Actions"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "auto-deploy-action": "lando/auto-deploy-action",
+    "version-bump-prompt": "^6.1.0"
+  },
+  "scripts": {
+    "release": "bump --tag --all --push package.json && git tag --force --annotate --message 'moving v1 tag' v1 && git push origin v1 --force"
+  }
+}

@@ -45,13 +45,13 @@ runs:
       run: |
         # Make sure slug is set
         if [ "${{ inputs.slug }}" == "" ]; then
-          echo "::error title="slug is not set!"::You must specify a GitHub repo slug in order to run this shit."
+          echo "::error title=Slug is not set!::You must specify a GitHub repo slug in order to run this shit."
           exit 47
         fi
 
         # Make sure manager command exists
         if ! command -v ${{ inputs.manager }} &> /dev/null; then
-          echo "::error title="Package manager ${{ inputs.manager }} does not exist!"::You must ensure the underlying package manager ${{ inputs.manager }} is installed."
+          echo "::error title=Package manager does not exist!::You must ensure the underlying package manager ${{ inputs.manager }} is installed."
           exit 48
         fi
 
@@ -60,16 +60,15 @@ runs:
       id: auto-deploy-action
       run: |
         # Set package output
-        if [ "${{ inputs.manager }}" == "yarn" ] || if [ "${{ inputs.manager }}" == "npm" ]; then
+        if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
           echo "::set-output name=package::$(node -p "require('./package.json').name")"
         fi
         # TODO: other managers
 
         # Set version output
-        if [ "${{ inputs.manager }}" == "yarn" ] || if [ "${{ inputs.manager }}" == "npm" ]; then
+        if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
           echo "::set-output name=version::$(node -p "require('./package.json').version")"
         fi
-        # TODO: other managers
 
     - name: Print outputs
       shell: bash

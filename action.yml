@@ -145,12 +145,14 @@ runs:
         echo "::endgroup::"
 
     - name: Checkout correct branch
-      if: inputs.branch || inputs.pr
+      if: inputs.branch
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
-        if git branch --list ${{ inputs.branch }}; then
+        git branch --list | grep ${{ inputs.branch }}
+        git branch --list --all
+        if git branch --list | grep ${{ inputs.branch }}; then
           git checkout ${{ inputs.branch }}
         else
           git checkout -b ${{ inputs.branch }}

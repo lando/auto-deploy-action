@@ -4,14 +4,12 @@ on:
   pull_request:
 
 jobs:
-  test-default-inputs:
+  test-user-inputs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         os:
           - ubuntu-20.04
-        node-version:
-          - '14'
         auto-deploy-repos:
           - lando/auto-deploy-action
     steps:
@@ -23,6 +21,7 @@ jobs:
         with:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
+          # Test things
           deploy: false
           package: JOHN
           version: "47"

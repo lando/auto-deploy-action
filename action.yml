@@ -61,23 +61,19 @@ runs:
       run: |
         # Set package output
         if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
-          echo "IM INSIDE"
           echo "::set-output name=package::$(node -p "require('./package.json').name")"
         fi
-        ls -lsa
-        node -p "require('./package.json').name"
-        echo "::set-output name=version::HELLOTHERE"
 
         # Set version output
-        # if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
-        #   echo "::set-output name=version::$(node -p "require('./package.json').version")"
-        # fi
+        if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
+          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        fi
 
     - name: Print outputs
       shell: bash
       run: |
-        echo "${{ steps.auto-deploy-action.package }}"
-        echo "${{ steps.auto-deploy-action.version }}"
+        echo "${{ steps.auto-deploy-action.outputs.package }}"
+        echo "${{ steps.auto-deploy-action.outputs.version }}"
 
 
 

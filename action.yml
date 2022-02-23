@@ -37,7 +37,6 @@ outputs:
     description: "The package version from user or manifest file to auto deploy."
     value: ${{ steps.auto-deploy-action.outputs.version }}
 
-
 runs:
   using: composite
   steps:
@@ -50,8 +49,12 @@ runs:
           exit 47
         fi
 
-        # MANGER MUST EXIST
-        #
+        # Make sure manager command exists
+        if ! command -v ${{ inputs.manager }} &> /dev/null; then
+          echo "::error title="Package manager ${{ inputs.manager }} does not exist!"::You must ensure the underlying package manager is installed."
+          exit 48
+        fi
+
 
     # - name: Handle inputs and set outputs
     #   id: auto-deploy-action

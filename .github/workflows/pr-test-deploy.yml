@@ -17,18 +17,18 @@ jobs:
     steps:
       - name: Checkout action code
         uses: actions/checkout@v2
-      # - name: Install node ${{ matrix.node-version }}
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: ${{ matrix.node-version }}
-      #     registry-url: https://registry.npmjs.org
-      #     cache: yarn
+      - name: Install node ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org
+          cache: yarn
       - name: Test Deploy
         uses: ./
         with:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
-          manager: urmom
+          manager: yarn
 
           # Optional props (defaults)
           token: ${{ github.token }}

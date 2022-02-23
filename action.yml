@@ -168,6 +168,33 @@ runs:
         fi
         echo "::endgroup::"
 
+    - name: Show changes
+      if: inputs.update == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Show code changes"
+        git diff
+        echo "::endgroup::"
+
+    - name: Commit changes
+      if: inputs.update == 'true'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Commit code changes"
+        git add .
+        git commit -m "AUTODEPLOYED ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}"
+        echo "::endgroup::"
+
+    - name: Deploy changes
+      if: inputs.update == 'deploy'
+      shell: bash
+      working-directory: auto-deploy-action-tmp
+      run: |
+        echo "::group::Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
+        git diff
+        echo "::endgroup::"
 
     # step 3: deploy package (command is dynamic based on manager selection)
       # yarn install PACKAGE@VERSION

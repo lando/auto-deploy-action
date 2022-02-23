@@ -28,4 +28,5 @@ jobs:
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
           registry: github
+          args: --dev
           deploy: false

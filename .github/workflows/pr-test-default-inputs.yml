@@ -23,6 +23,7 @@ jobs:
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
           deploy: false
+          update: false
 
       - name: "TEST: should use package name from package.json if package is not specified."
         if: always()

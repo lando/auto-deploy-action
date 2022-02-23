@@ -22,9 +22,10 @@ jobs:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
-          deploy: false
           package: JOHN
           version: "47"
+          deploy: false
+          update: false
 
       - name: "TEST: should use user specified package first"
         if: always()

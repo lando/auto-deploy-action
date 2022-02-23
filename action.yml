@@ -117,6 +117,7 @@ runs:
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
         if git branch --list ${{ inputs.branch }}; then
+          git fetch origin
           git checkout ${{ inputs.branch }}
         else
           git checkout -b ${{ inputs.branch }}

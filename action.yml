@@ -192,7 +192,7 @@ runs:
         echo "::endgroup::"
 
     - name: Deploy changes
-      if: inputs.update == 'deploy'
+      if: inputs.deploy == 'true'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |

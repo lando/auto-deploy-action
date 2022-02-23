@@ -183,11 +183,12 @@ runs:
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Commit code changes"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add .
         git commit \
           -m "AUTODEPLOYED ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}" \
           --allow-empty \
-          --author="github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
         echo "::endgroup::"
 
     - name: Deploy changes

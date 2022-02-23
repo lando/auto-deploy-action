@@ -50,7 +50,6 @@ runs:
         fi
 
         # Make sure manager command exists
-        yarn
         if ! command -v ${{ inputs.manager }} &> /dev/null; then
           echo "::error title="Package manager ${{ inputs.manager }} does not exist!"::You must ensure the underlying package manager is installed."
           exit 48

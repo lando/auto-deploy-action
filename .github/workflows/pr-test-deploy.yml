@@ -28,7 +28,7 @@ jobs:
         with:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
-          manager: yarn
+          manager: urmom
 
           # Optional props (defaults)
           token: ${{ github.token }}

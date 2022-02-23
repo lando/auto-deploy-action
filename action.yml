@@ -150,8 +150,6 @@ runs:
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
-        git branch --list | grep ${{ inputs.branch }}
-        git branch --list --all
         if git branch --list | grep ${{ inputs.branch }}; then
           git checkout ${{ inputs.branch }}
         else

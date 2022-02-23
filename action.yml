@@ -45,6 +45,9 @@ inputs:
     required: false
 
 outputs:
+  branch:
+    description: "The branch to deploy to."
+    value: ${{ steps.auto-deploy-action.outputs.branch }}
   package:
     description: "The package name from user or manifest file to auto deploy."
     value: ${{ steps.auto-deploy-action.outputs.package }}
@@ -131,23 +134,22 @@ runs:
         token: ${{ inputs.token }}
         path: auto-deploy-action-tmp
         fetch-depth: 0
+        ref: "${{ inputs.slug == 'lando/auto-deploy-action' && 'main' || '' }}"
 
     - name: Enter repo
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Validating repo exists in anticipated place"
-        pwd
         cat .git/HEAD
         echo "::endgroup::"
 
-    - name: Checkout branch
-      if: inputs.branch
+    - name: Checkout correct branch
+      if: inputs.branch || inputs.pr
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
-        pwd
         if git branch --list ${{ inputs.branch }}; then
           git checkout ${{ inputs.branch }}
         else
@@ -197,7 +199,7 @@ runs:
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
-        git push origin
+        git push origin $(git rev-parse --abbrev-ref HEAD)
         echo "::endgroup::"
 
     # step 3: deploy package (command is dynamic based on manager selection)

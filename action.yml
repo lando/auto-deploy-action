@@ -41,31 +41,37 @@ runs:
     - name: Validate required input and environment
       shell: bash
       run: |
-        # Make sure slug is set
+        ::group::Ensure slug is set
         if [ "${{ inputs.slug }}" == "" ]; then
           echo "::error title=Slug is not set!::You must specify a GitHub repo slug in order to run this shit."
           exit 47
         fi
+        ::endgroup::
 
-        # Make sure manager command exists
+        ::group::Ensure ${{ inputs.manager }} is installed
         if ! command -v ${{ inputs.manager }} &> /dev/null; then
           echo "::error title=Package manager does not exist!::You must ensure the underlying package manager ${{ inputs.manager }} is installed."
           exit 48
         fi
+        ::endgroup::
 
     - name: Set outputs
       shell: bash
       id: auto-deploy-action
       run: |
-        # Set package output
-        if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
+        ::group::Setting outputs
+        if [ "${{ inputs.package }}" != "" ]; then
+          echo "::set-output name=package::${{ inputs.package }}"
+        elif [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
           echo "::set-output name=package::$(node -p "require('./package.json').name")"
         fi
 
-        # Set version output
-        if [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
+        if [ "${{ inputs.version }}" != "" ]; then
+          echo "::set-output name=version::${{ inputs.version }}"
+        elif [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
           echo "::set-output name=version::$(node -p "require('./package.json').version")"
         fi
+        ::endgroup::
 
         # TODO: support other managers
         # TODO: support github refs
@@ -73,15 +79,18 @@ runs:
     - name: Validate outputs
       shell: bash
       run: |
-        # Make sure package is set
+        ::group::Validating package output
         if [ "${{ steps.auto-deploy-action.outputs.package }}" == "" ]; then
           echo "::error title=Package name is empty!::Package either not set or could not autodetect."
           exit 10
         fi
+        ::endgroup::
+        ::group::Validating version output
         if [ "${{ steps.auto-deploy-action.outputs.version }}" == "" ]; then
           echo "::error title=Version is empty!::Version either not set or could not autodetect."
           exit 10
         fi
+        ::endgroup::
 
     - name: Clone repo
       uses: actions/checkout@v2
@@ -94,13 +103,21 @@ runs:
     - name: Enter repo
       shell: bash
       run: |
+        ::group::Validating repo exists in anticipated place
         cd auto-deploy-action-tmp
         cat .git/HEAD
+        ::endgroup::
 
     - name: Checkout branch
       if: inputs.branch
       shell: bash
       run: |
+        if git branch --list ${{ inputs.branch }}; then
+          git checkout ${{ inputs.branch }}
+        else
+          git checkout -b ${{ inputs.branch }}
+        fi
+
         echo "we need to checkout the branch ${{ inputs.branch }}"
         # NOTE: will use default branch from clone, if this is set then additional checkout required
         # NOTE: will have to use different command based on whether branch exists?

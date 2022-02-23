@@ -1,7 +1,7 @@
 {
   "name": "@lando/auto-deploy-action",
   "description": "A GitHub Action for auto deploying packages from a source repo to various target repo(s).",
-  "version": "1.0.0",
+  "version": "v1.0.0",
   "author": "John Ouellet @labboy0276",
   "contributors": [
     {

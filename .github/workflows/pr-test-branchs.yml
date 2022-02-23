@@ -40,8 +40,9 @@ jobs:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
-          deploy: false
           branch: main
+          deploy: false
+          update: false
   test-new-branch:
     runs-on: ubuntu-latest
     strategy:
@@ -59,6 +60,6 @@ jobs:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
-          deploy: false
           branch:  ${{ github.sha }}
-
+          deploy: false
+          update: false

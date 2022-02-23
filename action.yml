@@ -156,7 +156,7 @@ runs:
         echo "::endgroup::"
 
     - name: Update code
-      if: inputs.update
+      if: ${{ inputs.update }}
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |

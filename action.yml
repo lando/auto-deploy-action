@@ -156,11 +156,10 @@ runs:
         echo "::endgroup::"
 
     - name: Update code
-      if: inputs.update != 'true'
+      if: inputs.update == 'true'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
-        echo ${{ inputs.update }}
         echo "::group::Updating code with ${{ inputs.manager }}"
         if [ "${{ inputs.manager }}" == "yarn" ]; then
           yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}

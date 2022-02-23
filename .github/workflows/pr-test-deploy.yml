@@ -28,6 +28,7 @@ jobs:
         with:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
+          manager: yarn
 
           # Optional props (defaults)
           token: ${{ github.token }}
@@ -35,7 +36,6 @@ jobs:
           package: defaults to package manager manifest file - from package.json for yarn|node
           version: defaults to package manager manifest file - from package.json for yarn|node
           # TOOD: support other managers
-          manager: prefers yarn fallback to npm
           branch: empty by default (pushes to default branch), otherwise checks out branch and uses that
 
           # Note: user is responsible for having correct tools and versions installed aka yarn on node14

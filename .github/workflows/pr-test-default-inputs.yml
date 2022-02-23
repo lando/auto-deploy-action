@@ -1,0 +1,51 @@
+name: Test Default Inputs
+
+on:
+  pull_request:
+
+jobs:
+  test-default-inputs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        node-version:
+          - '14'
+        auto-deploy-repos:
+          - lando/auto-deploy-action
+    steps:
+      - name: Checkout action code
+        uses: actions/checkout@v2
+      - name: Run Auto Deploy Action
+        uses: ./
+        id: default-input-tests
+        with:
+          # Required props
+          slug: ${{ matrix.auto-deploy-repos }}
+          deploy: false
+
+      - name: "TEST: should use package name from package.json if package is not specified."
+        if: always()
+        run: |
+          if [ "${{ steps.default-input-tests.package }}" == "@lando/auto-deploy-action" ]; then
+            echo "::notice title=TEST PASSED::Package name set from package.json correctly"
+          else
+            echo "::error title=TEST FAILED!::Package name not set correctly"
+            exit 1
+          fi
+        shell: bash
+
+      - name: "TEST: should use version from package.json if version is not specified."
+        if: always()
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "${{ steps.default-input-tests.version }}" == "$VERSION" ]; then
+            echo "::notice title=TEST PASSED::Version set from package.json correctly"
+          else
+            echo "::error title=TEST FAILED!::Version not set correctly"
+            exit 1
+          fi
+        shell: bash
+
+

@@ -27,4 +27,5 @@ jobs:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
+          registry: github
           deploy: false

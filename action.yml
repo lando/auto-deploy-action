@@ -24,6 +24,14 @@ inputs:
   package:
     description: "The name of the package."
     required: false
+  registry:
+    description: "Where the updated pacakge lives."
+    required: false
+    default: yarn
+  separator:
+    description: "The separator between package and version"
+    required: false
+    default: "@"
   token:
     description: "A GitHub personal access token with the entire `repo` permission."
     required: false
@@ -39,6 +47,9 @@ outputs:
   version:
     description: "The package version from user or manifest file to auto deploy."
     value: ${{ steps.auto-deploy-action.outputs.version }}
+  separator:
+    description: "The separator between package and version"
+    value: ${{ steps.auto-deploy-action.outputs.separator }}
 
 runs:
   using: composite
@@ -67,19 +78,30 @@ runs:
         echo "::group::Setting outputs"
         if [ "${{ inputs.package }}" != "" ]; then
           echo "::set-output name=package::${{ inputs.package }}"
-        elif [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
           echo "::set-output name=package::$(node -p "require('./package.json').name")"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=package::${{ github.repository }}"
+        fi
+
+        if [ "${{ inputs.separator }}" != "" ]; then
+          echo "::set-output name=separator::${{ inputs.separator }}"
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
+          echo "::set-output name=separator::@"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=separator::#"
         fi
 
         if [ "${{ inputs.version }}" != "" ]; then
           echo "::set-output name=version::${{ inputs.version }}"
-        elif [ "${{ inputs.manager }}" == "yarn" ] || [ "${{ inputs.manager }}" == "npm" ]; then
+        elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
           echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        elif [ "${{ inputs.registry }}" == "github" ]; then
+          echo "::set-output name=version::${{ github.ref_type == 'branch' && github.sha || github.ref_name }}"
         fi
         echo "::endgroup::"
 
-        # TODO: support other managers
-        # TODO: support github refs
+        # TODO: support other registries: composer, etc
 
     - name: Validate outputs
       shell: bash
@@ -135,9 +157,9 @@ runs:
       run: |
         echo "::group::Updating code with ${{ inputs.manager }}"
         if [ "${{ inputs.manager }}" == "yarn" ]; then
-          yarn add ${{ steps.auto-deploy-action.outputs.package }}@${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+          yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
         elif [ "${{ inputs.manager }}" == "npm" ]; then
-          npm install ${{ steps.auto-deploy-action.outputs.package }}@${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+          npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
         fi
         echo "::endgroup::"
 

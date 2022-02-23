@@ -28,7 +28,7 @@ jobs:
       - name: "TEST: should use package name from package.json if package is not specified."
         if: always()
         run: |
-          if [ "${{ steps.default-input-tests.package }}" == "@lando/auto-deploy-action" ]; then
+          if [ "${{ steps.default-input-tests.outputs.package }}" == "@lando/auto-deploy-action" ]; then
             echo "::notice title=TEST PASSED::Package name set from package.json correctly"
           else
             echo "::error title=TEST FAILED!::Package name not set correctly"
@@ -40,7 +40,7 @@ jobs:
         if: always()
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          if [ "${{ steps.default-input-tests.version }}" == "$VERSION" ]; then
+          if [ "${{ steps.default-input-tests.outputs.version }}" == "$VERSION" ]; then
             echo "::notice title=TEST PASSED::Version set from package.json correctly"
           else
             echo "::error title=TEST FAILED!::Version not set correctly"

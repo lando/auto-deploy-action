@@ -30,7 +30,7 @@ jobs:
       - name: "TEST: should use user specified package first"
         if: always()
         run: |
-          if [ "${{ steps.default-input-tests.package }}" == "JOHN" ]; then
+          if [ "${{ steps.default-input-tests.outputs.package }}" == "JOHN" ]; then
             echo "::notice title=TEST PASSED::Package name set from user correctly"
           else
             echo "::error title=TEST FAILED!::Package name not set correctly"
@@ -41,7 +41,7 @@ jobs:
       - name: "TEST: should use user specified version first."
         if: always()
         run: |
-          if [ "${{ steps.default-input-tests.version }}" == "47" ]; then
+          if [ "${{ steps.default-input-tests.outputs.version }}" == "47" ]; then
             echo "::notice title=TEST PASSED::Version set from user correctly"
           else
             echo "::error title=TEST FAILED!::Version not set correctly"

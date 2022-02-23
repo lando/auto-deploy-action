@@ -29,4 +29,3 @@ jobs:
           # Test things
           registry: github
           args: --dev
-          deploy: false

@@ -106,6 +106,7 @@ runs:
     - name: Enter repo
       shell: bash
       run: |
+        pwd
         echo "::group::Validating repo exists in anticipated place"
         cd auto-deploy-action-tmp
         cat .git/HEAD
@@ -115,9 +116,9 @@ runs:
       if: inputs.branch
       shell: bash
       run: |
+        pwd
         echo "::group::Checking out branch ${{ inputs.branch }}"
         if git branch --list ${{ inputs.branch }}; then
-          git fetch origin
           git checkout ${{ inputs.branch }}
         else
           git checkout -b ${{ inputs.branch }}

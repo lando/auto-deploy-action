@@ -24,6 +24,10 @@ inputs:
   package:
     description: "The name of the package."
     required: false
+  pr:
+    description: "Open a PR instead of directly merging into the `branch` of `slug`."
+    required: false
+    default: true
   registry:
     description: "Where the updated pacakge lives."
     required: false
@@ -145,12 +149,14 @@ runs:
         echo "::endgroup::"
 
     - name: Checkout correct branch
-      if: inputs.branch
+      if: inputs.branch || inputs.pr == 'true'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
-        if git branch --list | grep ${{ inputs.branch }}; then
+        if [ "${{ inputs.branch }}" == "" ] && [ "${{ inputs.pr }}" == "true" ]; then
+          git checkout -b pr-update-to-${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}
+        elif git branch --list | grep ${{ inputs.branch }}; then
           git checkout ${{ inputs.branch }}
         else
           git checkout -b ${{ inputs.branch }}

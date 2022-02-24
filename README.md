@@ -30,9 +30,10 @@ These keys are set to sane defaults but can be modified as needed.
 | Name | Description | Default | Example |
 |---|---|---|---|
 | `args` | Extra options to pass into the manager update command. | "" | `--dev` |
-| `branch` | The branch to deploy the updated package to. | Default branch for `slug`. | `master` |
+| `branch` | The branch to deploy the updated package to. | Automatically created. If `pr` is `false` then the Default branch for `slug`. | `master` |
 | `manager` | The package manager to use for updating. | `yarn` | `yarn` \| `npm` |
 | `package` | The name of the package to update. | Set based on `registry` | `@lando/php` |
+| `pr` | Open a pull request with the change. | `true` | `false` |
 | `registry` | The place we should get the updated package from. | `npm` | `yarn` \| `npm` \| `github` |
 | `separator` | The character that separates the `package` and `version` in the package manager update command  | Set based on `registry` | `@` |
 | `token` | [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with permission to `read/write` to target `slug` | `${{ github.token }}`. | `MYTOKEN` |

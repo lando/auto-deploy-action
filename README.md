@@ -1,68 +1,94 @@
-# Spark Docker Publish Action
+# Autodeploy Action
 
-## Version `5.0.0-beta.1`
+This is a GitHub action that allows you to automatically deploy new packages from a source repo to various dependent repos.
 
-## Description
+A concrete example would be you have 30 [Vuepress](https://vuepress.vuejs.org/) sites that rely on a custom theme. When that custom theme pushes a new stable release to `npm` it also automatically opens a pull request on all 30 sites with the updated `npm` pacakge.
 
-A GitHub Action to publish Spark Docker containers to a Docker registry.
+In this way it is _sorta_ like `dependapot` except that the source repo **pushes** updates to its dependents as opposed to the dependent periodically looking for upstream updates.
+
+It currently comes with the following caveats:
+
+#### Caveats
+
+* Only works with `yarn` and `npm` as package managers (would love to add support for `composer`, `pip` etc)
+* Only works with `npm`, `yarn` and `github` as "upstream" registries
+* Only works `GitHub` repo to `GitHub` repo
+* User is responsible for installing any underlying deps (eg `node` and `yarn`) required by this action
 
 ## Required Inputs
 
 These keys must be set correctly for the action to work.
 
-| Name | Description | Recommended Value |
+| Name | Description | Example Value |
 |---|---|---|
-| `package-token` | A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) with `read:packages` permissions. Used for downloading private `npm` packages. | `${{ secrets.CPENY_GH_PACKAGE_READ_TOKEN }}` |
-| `publish-token` | A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) with `write:packages` permissions. Used to publish containers to the package registry. | `${{ secrets.CPENY_MACHINE_USER_WRITE_PACKAGES_TOKEN }}` |
-| `ssh-key` | An SSH private key with pull access to the repository. | `${{ secrets.CPENY_GH_SSH_PRIVATE_KEY }}` |
-| `business-unit` | The full name of the business unit. | `foxsports \| foxnews \| foxbusiness` |
-| `component` | The spark stack component we're building for. | `api \| cms \| frontend \| layout-manager \| styles \| scripts`
+| `slug` | The GitHub repo slug you want to deploy the update package to.  | `lando/php` |
 
 ## Optional Inputs
 
 These keys are set to sane defaults but can be modified as needed.
 
-| Name | Description | Default Value |
-|---|---|---|
-| `build` | A toggle to prevent a build from happening. Setting this to `false` will also set `push` to `false`.  | `true` |
-| `push` | A toggle to prevent the image from being published. | `true` |
-| `registry` | The URL of the container registry to publish to.  | `ghcr.io` |
-| `ref` | The commit hash, branch or tag to be checked out.  | `${{ github.event.release.target_commitish }}` |
-| `slug` | The GitHub repo slug containing the source for the image.  | `${{ github.repository }}` |
-| `tag` | The tag version for the image being published. | `${{ github.ref_type == 'branch' && github.sha \|\| github.ref_name }}` |
+| Name | Description | Default | Example |
+|---|---|---|---|
+| `args` | Extra options to pass into the manager update command. | "" | `--dev` |
+| `branch` | The branch to deploy the updated package to. | Default branch for `slug`. | `master` |
+| `manager` | The package manager to use for updating. | `yarn` | `yarn` \| `npm` |
+| `package` | The name of the package to update. | Set based on `registry` | `@lando/php` |
+| `registry` | The place we should get the updated package from. | `npm` | `yarn` \| `npm` \| `github` |
+| `separator` | The character that separates the `package` and `version` in the package manager update command  | Set based on `registry` | `@` |
+| `token` | [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with permission to `read/write` to target `slug` | `${{ github.token }}`. | `MYTOKEN` |
+| `version` | The version of the package to update to. | Set based on `registry` | `1.3.2` |
 
-## Deprecated Inputs
+## Testing Inputs
 
-* **`businessUnit`** - **DEPRECATED** in favor of `business-unit`.
-* **`publishToken`** - **DEPRECATED** in favor of `publish-token`.
-* **`readToken`** - **DEPRECATED** in favor of `package-token`.
-* **`sshKey`** - **DEPRECATED** in favor of `ssh-key`.
-* **`sourceBranch`** - **DEPRECATED** in favor of `ref`.
-* **`version`** - **DEPRECATED** in favor of `tag`.
+These keys are usually not needed but can be useful for testing.
 
-Note that at some point these will be removed so please switch your action's config to the favored keys.
+| Name | Description | Default | Example |
+|---|---|---|---|
+| `deploy` | Toggle to disable deployment. Will `--dry-run` the `git push`. | `true` | `false` |
+| `update` | Toggle to disable updating. | `true` | `false` |
 
 ## Outputs
 
+These outputs are mostly used internally but are nonetheless available.
 
-
-## Usage Example
-
-```yml
-name: Publish Spark Docker Container
-on:
-  release:
-    types: [published, edited]
-jobs:
-  publish_docker_container:
-    runs-on: ubuntu-latest
-      - name: Publish Spark Docker Container
-        id: publish_spark_docker_container
-        uses: foxcorp/spark-docker-publish-action/@v5
-        with:
-          package-token: ${{ secrets.CPENY_MACHINE_USER_READ_PACKAGES_TOKEN }}
-          publish-token: ${{ secrets.CPENY_MACHINE_USER_WRITE_PACKAGES_TOKEN }}
-          ssh-key: ${{ secrets.CPENY_GH_SSH_PRIVATE_KEY }}
-          business-unit: usfl
-          component: api
+```yaml
+outputs:
+  branch:
+    description: "The branch to deploy to."
+    value: ${{ steps.auto-deploy-action.outputs.branch }}
+  package:
+    description: "The package name from user or manifest file to auto deploy."
+    value: ${{ steps.auto-deploy-action.outputs.package }}
+  version:
+    description: "The package version from user or manifest file to auto deploy."
+    value: ${{ steps.auto-deploy-action.outputs.version }}
+  separator:
+    description: "The separator between package and version"
+    value: ${{ steps.auto-deploy-action.outputs.separator }}
 ```
+
+##  Examples
+
+1.
+
+## Changelog
+
+We try to log all changes big and small in both [THE CHANGELOG](https://github.com/lando/auto-deploy-action/blob/main/CHANGELOG.md) and the [release notes](https://github.com/lando/auto-deploy-action/releases).
+
+## Releasing
+
+```bash
+yarn release
+```
+
+## Contributors
+
+<a href="https://github.com/lando/auto-deploy-action/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=lando/auto-deploy-action" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
+## Other Resources
+
+* [Important advice](https://www.youtube.com/watch?v=WA4iX5D9Z64)

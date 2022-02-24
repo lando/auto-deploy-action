@@ -219,6 +219,7 @@ runs:
         fi
 
     - name: Open PR with changes
+      if: inputs.pr == 'true'
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ inputs.token }}

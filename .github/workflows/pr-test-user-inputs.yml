@@ -25,6 +25,7 @@ jobs:
           package: JOHN
           version: "47"
           deploy: false
+          pr: false
           update: false
 
       - name: "TEST: should use user specified package first"

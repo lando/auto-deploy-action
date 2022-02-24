@@ -24,6 +24,14 @@ inputs:
   package:
     description: "The name of the package."
     required: false
+  pr:
+    description: "Open a PR instead of directly merging into the `branch` of `slug`."
+    required: false
+    default: true
+  pr-base:
+    description: "The base branch to open the PR against."
+    required: false
+    default: main
   registry:
     description: "Where the updated pacakge lives."
     required: false
@@ -145,7 +153,7 @@ runs:
         echo "::endgroup::"
 
     - name: Checkout correct branch
-      if: inputs.branch
+      if: inputs.branch && inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -171,7 +179,6 @@ runs:
         echo "::endgroup::"
 
     - name: Show changes
-      if: inputs.update == 'true'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -180,7 +187,7 @@ runs:
         echo "::endgroup::"
 
     - name: Commit changes
-      if: inputs.update == 'true'
+      if: inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -193,20 +200,33 @@ runs:
           --allow-empty
         echo "::endgroup::"
 
-    - name: Deploy changes
-      if: inputs.deploy == 'true'
+    - name: Deploy changes directly
+      if: inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
-        echo "::group::Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
-        git push origin $(git rev-parse --abbrev-ref HEAD)
-        echo "::endgroup::"
+        if [ "${{ inputs.deploy }}" == "true" ]; then
+          echo "::group::Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
+          git push origin $(git rev-parse --abbrev-ref HEAD)
+          echo "::endgroup::"
+        else
+          echo "::group::TEST Deploy ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
+          git push origin $(git rev-parse --abbrev-ref HEAD) --dry-run
+          echo "::endgroup::"
+        fi
 
-    - name: Deploy changes (DRY RUN)
-      if: inputs.deploy == 'false'
-      shell: bash
-      working-directory: auto-deploy-action-tmp
-      run: |
-        echo "::group::Deploy dry run ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} to ${{ inputs.slug }}"
-        git push origin $(git rev-parse --abbrev-ref HEAD) --dry-run
-        echo "::endgroup::"
+    - name: Open PR with changes
+      if: inputs.pr == 'true'
+      uses: peter-evans/create-pull-request@v3
+      env:
+        COMPUTED_BRANCH: "pr-update-${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}"
+      with:
+        token: ${{ inputs.token }}
+        path: auto-deploy-action-tmp
+        commit-message: AUTODEPLOYED ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}
+        committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+        author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+        base: ${{ inputs.pr-base }}
+        branch:  ${{ inputs.branch != '' && inputs.branch || env.COMPUTED_BRANCH }}
+        delete-branch: true
+        title: Update ${{ inputs.slug }} to use ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}

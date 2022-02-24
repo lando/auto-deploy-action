@@ -23,6 +23,7 @@ jobs:
           # Test things
           deploy: false
           update: false
+          pr: false
   test-existing-branch:
     runs-on: ubuntu-latest
     strategy:
@@ -42,6 +43,7 @@ jobs:
           # Test things
           branch: main
           deploy: false
+          pr: false
           update: false
   test-new-branch:
     runs-on: ubuntu-latest
@@ -62,4 +64,5 @@ jobs:
           # Test things
           branch: ${{ github.job }}-${{ github.run_number }}
           deploy: false
+          pr: false
           update: false

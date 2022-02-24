@@ -27,9 +27,9 @@ jobs:
           # Required props
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
+          pr-base: main
           registry: github
           args: --dev
-          deploy: false
 
   test-direct-update:
     runs-on: ubuntu-latest

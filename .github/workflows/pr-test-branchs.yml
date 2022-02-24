@@ -64,4 +64,5 @@ jobs:
           # Test things
           branch: ${{ github.job }}-${{ github.run_number }}
           deploy: false
+          pr: false
           update: false

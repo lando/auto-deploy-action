@@ -153,14 +153,12 @@ runs:
         echo "::endgroup::"
 
     - name: Checkout correct branch
-      if: inputs.branch || inputs.pr == 'true'
+      if: inputs.branch && inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
         echo "::group::Checking out branch ${{ inputs.branch }}"
-        if [ "${{ inputs.branch }}" == "" ] && [ "${{ inputs.pr }}" == "true" ]; then
-          git checkout -b pr-update-to-${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}
-        elif git branch --list | grep ${{ inputs.branch }}; then
+        if git branch --list | grep ${{ inputs.branch }}; then
           git checkout ${{ inputs.branch }}
         else
           git checkout -b ${{ inputs.branch }}
@@ -168,7 +166,7 @@ runs:
         echo "::endgroup::"
 
     - name: Update code
-      if: inputs.update == 'true'
+      if: inputs.update == 'true' && inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -181,7 +179,7 @@ runs:
         echo "::endgroup::"
 
     - name: Show changes
-      if: inputs.update == 'true'
+      if: inputs.update == 'true' && inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -190,7 +188,7 @@ runs:
         echo "::endgroup::"
 
     - name: Commit changes
-      if: inputs.update == 'true'
+      if: inputs.update == 'true' && inputs.pr == 'false'
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
@@ -227,6 +225,7 @@ runs:
         commit-message: AUTODEPLOYED ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}
         committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
         author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-        base: ${{ inputs.pr-base }}
+        branch:
+        base: main
         delete-branch: true
         title: Update ${{ inputs.slug }} to use ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }}

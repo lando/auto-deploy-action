@@ -69,10 +69,6 @@ outputs:
     value: ${{ steps.auto-deploy-action.outputs.separator }}
 ```
 
-##  Examples
-
-1.
-
 ## Changelog
 
 We try to log all changes big and small in both [THE CHANGELOG](https://github.com/lando/auto-deploy-action/blob/main/CHANGELOG.md) and the [release notes](https://github.com/lando/auto-deploy-action/releases).

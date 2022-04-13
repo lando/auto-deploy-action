@@ -1,5 +1,8 @@
 name: "Auto Deploy Action"
 description: "Auto deploys new versions of (currently only) node packages from their source repo to various target repos."
+branding:
+  icon: zap
+  color: purple
 inputs:
   # Required
   slug:

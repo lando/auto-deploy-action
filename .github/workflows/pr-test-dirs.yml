@@ -11,7 +11,7 @@ jobs:
         os:
           - ubuntu-20.04
         repos:
-          - lando/auto-deploy-action'
+          - lando/auto-deploy-action
     steps:
       - name: Checkout action code
         uses: actions/checkout@v2

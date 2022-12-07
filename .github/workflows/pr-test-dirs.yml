@@ -11,7 +11,7 @@ jobs:
         os:
           - ubuntu-20.04
         repos:
-          - '@lando/argv'
+          - lando/auto-deploy-action'
     steps:
       - name: Checkout action code
         uses: actions/checkout@v2
@@ -21,8 +21,10 @@ jobs:
           # Required props
           slug: ${{ matrix.repos }}
           # Test things
-          deploy: false
-          update: true
-          pr: false
-          dirs: ./,./test
+          package: '@lando/argv'
           args: --dev
+          deploy: false
+          dirs: ./,./test
+          pr: false
+          update: true
+

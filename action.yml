@@ -20,6 +20,10 @@ inputs:
     description: "Toggle to disable deploy. Mostly used for testing."
     required: false
     default: true
+  dirs:
+    description: "The dirs containing a package.json to update."
+    required: false
+    default: ./
   manager:
     description: "The package manager to use."
     required: false
@@ -173,6 +177,14 @@ runs:
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
+        DIRS_INPUT="${{ inputs.dirs }}"
+        echo "$DIRS_INPUT"
+
+        IFS=',' read -ra DIRS <<< "$DIRS_INPUT"
+        for DIR in "${DIRS[@]}"; do
+          echo "TRYING DIR: $DIR"
+        done
+
         echo "::group::Updating code with ${{ inputs.manager }}"
         if [ "${{ inputs.manager }}" == "yarn" ]; then
           yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}

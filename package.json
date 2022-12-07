@@ -2,15 +2,11 @@
   "name": "@lando/auto-deploy-action",
   "description": "A GitHub Action for auto deploying packages from a source repo to various target repo(s).",
   "version": "2.0.0",
-  "author": "John Ouellet @labboy0276",
+  "author": "Mike Pirog @pirog",
   "contributors": [
     {
-      "name": "Mike Pirog",
-      "email": "mike@lando.dev"
-    },
-    {
-      "name": "Barney Rubble",
-      "email": "b@rubble.com"
+      "name": "John Ouellet",
+      "email": "john@lando.dev"
     }
   ],
   "license": "GPL-3.0",

@@ -177,20 +177,25 @@ runs:
       shell: bash
       working-directory: auto-deploy-action-tmp
       run: |
-        DIRS_INPUT="${{ inputs.dirs }}"
-        echo "$DIRS_INPUT"
-
-        IFS=',' read -ra DIRS <<< "$DIRS_INPUT"
-        for DIR in "${DIRS[@]}"; do
-          echo "TRYING DIR: $DIR"
-        done
-
         echo "::group::Updating code with ${{ inputs.manager }}"
-        if [ "${{ inputs.manager }}" == "yarn" ]; then
-          yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
-        elif [ "${{ inputs.manager }}" == "npm" ]; then
-          npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
-        fi
+          # arrayify directory input for loopage
+          DIRS_INPUT="${{ inputs.dirs }}"
+          IFS=',' read -ra DIRS <<< "$DIRS_INPUT"
+
+          pwd
+          echo "{{ github.workspace }}"
+
+          for DIR in "${DIRS[@]}"; do
+            cd "{{ github.workspace }}/auto-deploy-action-tmp/$DIR"
+            pwd
+            if [ "${{ inputs.manager }}" == "yarn" ]; then
+              yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+            elif [ "${{ inputs.manager }}" == "npm" ]; then
+              npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+            fi
+            cd "{{ github.workspace }}/auto-deploy-action-tmp"
+            pwd
+          done
         echo "::endgroup::"
 
     - name: Show changes

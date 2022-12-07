@@ -10,8 +10,8 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-        auto-deploy-repos:
-          - lando/auto-deploy-action
+        repos:
+          - '@lando/argv'
     steps:
       - name: Checkout action code
         uses: actions/checkout@v2
@@ -25,3 +25,4 @@ jobs:
           update: true
           pr: false
           dirs: ./,./test
+          args: --dev

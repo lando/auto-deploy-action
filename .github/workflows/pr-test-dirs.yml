@@ -24,7 +24,7 @@ jobs:
           package: '@lando/argv'
           args: --dev
           deploy: false
-          dirs: test,
+          dirs: ./,./test
           pr: false
           update: true
           version: latest

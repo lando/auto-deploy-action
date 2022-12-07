@@ -27,4 +27,5 @@ jobs:
           dirs: ./,./test
           pr: false
           update: true
+          version: latest
 

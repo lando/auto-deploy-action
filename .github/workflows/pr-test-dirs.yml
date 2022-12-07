@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  test-default-branch:
+  test-multi-dirs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,7 +19,7 @@ jobs:
         uses: ./
         with:
           # Required props
-          slug: ${{ matrix.auto-deploy-repos }}
+          slug: ${{ matrix.repos }}
           # Test things
           deploy: false
           update: true

@@ -22,6 +22,6 @@ jobs:
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
           deploy: false
-          update: false
+          update: true
           pr: false
           dirs: ./,./test

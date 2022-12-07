@@ -1,0 +1,31 @@
+name: Test Multiple Directory Cases
+
+on:
+  pull_request:
+
+jobs:
+  test-multi-dirs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+        repos:
+          - lando/auto-deploy-action
+    steps:
+      - name: Checkout action code
+        uses: actions/checkout@v2
+      - name: Run Auto Deploy Action
+        uses: ./
+        with:
+          # Required props
+          slug: ${{ matrix.repos }}
+          # Test things
+          package: '@lando/argv'
+          args: --dev
+          deploy: false
+          dirs: ./,./test
+          pr: false
+          update: true
+          version: latest
+

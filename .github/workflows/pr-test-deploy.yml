@@ -16,9 +16,9 @@ jobs:
           - lando/auto-deploy-action
     steps:
       - name: Checkout action code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run Auto Deploy Action
@@ -43,9 +43,9 @@ jobs:
           - lando/auto-deploy-action
     steps:
       - name: Checkout action code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Run Auto Deploy Action

@@ -26,6 +26,10 @@
     log-symbols "^4.0.0"
     semver "^7.3.2"
 
+"@lando/auto-deploy-action@lando/auto-deploy-action#14/merge":
+  version "2.0.2"
+  resolved "https://codeload.github.com/lando/auto-deploy-action/tar.gz/989ca160f1e265ae86e04eaa748575229e56579c"
+
 "@lando/auto-deploy-action@lando/auto-deploy-action#2/merge":
   version "1.0.1"
   resolved "https://codeload.github.com/lando/auto-deploy-action/tar.gz/13a4bf1c27732b1a550c331492644641e39c081e"
@@ -79,10 +83,6 @@ array-union@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
-
-auto-deploy-action@lando/auto-deploy-action:
-  version "2.0.0"
-  resolved "https://codeload.github.com/lando/auto-deploy-action/tar.gz/092a439dd7d124cbe8c1a8e56ac532207b1d95e5"
 
 braces@^3.0.1:
   version "3.0.2"

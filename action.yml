@@ -99,27 +99,27 @@ runs:
       run: |
         echo "::group::Setting outputs"
         if [ "${{ inputs.package }}" != "" ]; then
-          echo "::set-output name=package::${{ inputs.package }}"
+          echo "package=${{ inputs.package }}" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
-          echo "::set-output name=package::$(node -p "require('./package.json').name")"
+          echo "package=$(node -p "require('./package.json').name")" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "github" ]; then
-          echo "::set-output name=package::${{ github.repository }}"
+          echo "package=${{ github.repository }}" >> $GITHUB_OUTPUT
         fi
 
         if [ "${{ inputs.separator }}" != "" ] && [ "${{ inputs.separator }}" != "@" ]; then
-          echo "::set-output name=separator::${{ inputs.separator }}"
+          echo "separator=${{ inputs.separator }}" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
-          echo "::set-output name=separator::@"
+          echo "separator=@" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "github" ]; then
-          echo "::set-output name=separator::#"
+          echo "separator=#" >> $GITHUB_OUTPUT
         fi
 
         if [ "${{ inputs.version }}" != "" ]; then
-          echo "::set-output name=version::${{ inputs.version }}"
+          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
-          echo "::set-output name=version::$(node -p "require('./package.json').version")"
+          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "github" ]; then
-          echo "::set-output name=version::${{ github.ref_name }}"
+          echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
         fi
         echo "::endgroup::"
 

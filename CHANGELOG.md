@@ -1,3 +1,7 @@
+## v2.0.4 - [June 17, 2023](https://github.com/lando/auto-deploy-action/releases/tag/v2.0.4)
+
+* Switched release flow over to [@lando/prepare-release-action](https://github.com/lando/prepare-release-action)
+
 ## v2.0.3 - [April 27, 2023](https://github.com/lando/auto-deploy-action/releases/tag/v2.0.3)
 
 * Updated core actions to `v3`

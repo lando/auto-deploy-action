@@ -31,5 +31,4 @@ jobs:
       - name: Prepare release
         uses: lando/prepare-release-action@v2
         with:
-          commands: yarn prepare
           sync-tags: v2

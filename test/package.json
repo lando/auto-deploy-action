@@ -2,7 +2,7 @@
   "name": "@lando/auto-deploy-action-multidir-test",
   "description": "A GitHub Action for auto deploying packages from a source repo to various target repo(s).",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@lando/argv": "^1.0.1"

@@ -119,7 +119,7 @@ runs:
         elif [ "${{ inputs.registry }}" == "yarn" ] || [ "${{ inputs.registry }}" == "npm" ]; then
           echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
         elif [ "${{ inputs.registry }}" == "github" ]; then
-          echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "version=${{ github.ref }}" >> $GITHUB_OUTPUT
         fi
         echo "::endgroup::"
 

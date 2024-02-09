@@ -22,7 +22,7 @@ jobs:
           slug: ${{ matrix.repos }}
           # Test things
           package: '@lando/argv'
-          args: --dev
+          args: -D
           deploy: false
           dirs: ./,./test
           pr: false

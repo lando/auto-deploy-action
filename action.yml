@@ -27,7 +27,7 @@ inputs:
   manager:
     description: "The package manager to use."
     required: false
-    default: yarn
+    default: npm
   package:
     description: "The name of the package."
     required: false
@@ -42,7 +42,7 @@ inputs:
   registry:
     description: "Where the updated pacakge lives."
     required: false
-    default: yarn
+    default: npm
   separator:
     description: "The separator between package and version"
     required: false

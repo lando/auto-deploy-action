@@ -185,7 +185,7 @@ runs:
           for DIR in "${DIRS[@]}"; do
             PKGDIR="${{ github.workspace }}/auto-deploy-action-tmp/$DIR"
             cd "$PKGDIR"
-            echo "Updating $PKGDIR/package.json with ${{ inputs.manager }}"
+            echo "Updating $PKGDIR/package.json with ${{ inputs.manager }} to ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} with ${{ inputs.args }}"
             if [ "${{ inputs.manager }}" == "yarn" ]; then
               yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
             elif [ "${{ inputs.manager }}" == "npm" ]; then

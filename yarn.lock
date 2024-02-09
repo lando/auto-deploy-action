@@ -2,10 +2,11 @@
 # yarn lockfile v1
 
 
-"@lando/auto-deploy-action@lando/auto-deploy-action#2/merge":
-  version "1.0.1"
-  resolved "https://codeload.github.com/lando/auto-deploy-action/tar.gz/13a4bf1c27732b1a550c331492644641e39c081e"
+"@lando/auto-deploy-action@github:lando/auto-deploy-action#refs/pull/16/merge":
+  version "2.0.5"
+  resolved "git+ssh://git@github.com/lando/auto-deploy-action.git#bcf4e9fa8933f7bc3a21c9bffcc4e0499da5418a"
 
 auto-deploy-action@lando/auto-deploy-action:
   version "2.0.0"
   resolved "https://codeload.github.com/lando/auto-deploy-action/tar.gz/092a439dd7d124cbe8c1a8e56ac532207b1d95e5"
+  integrity sha512-FDHpAhF+q1Bl2OgGsN/FJlilVi+5l4i7sixfnB4FHctE/OmMr78IvsI8Sd6iQshCXp8N4I5keBr2lFWoLH/Zpw==

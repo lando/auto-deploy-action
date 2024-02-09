@@ -32,7 +32,7 @@ These keys are set to sane defaults but can be modified as needed.
 | `args` | Extra options to pass into the manager update command. | "" | `--dev` |
 | `branch` | The branch to deploy the updated package to. | Automatically created. If `pr` is `false` then the Default branch for `slug`. | `master` |
 | `dirs` | The dirs containing a package.json to update. | `./` | `./,./subdir1,./subdir2` |
-| `manager` | The package manager to use for updating. | `yarn` | `yarn` \| `npm` |
+| `manager` | The package manager to use for updating. | `npm` | `yarn` \| `npm` |
 | `package` | The name of the package to update. | Set based on `registry` | `@lando/php` |
 | `pr` | Open a pull request with the change. | `true` | `false` |
 | `pr-base` | The base branch to open the PR against. | `main` | `master` |

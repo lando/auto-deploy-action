@@ -2,7 +2,7 @@
 
 This is a GitHub action that allows you to automatically deploy new packages from a source repo to various dependent repos.
 
-A concrete example would be you have 30 [Vuepress](https://vuepress.vuejs.org/) sites that rely on a custom theme. When that custom theme pushes a new stable release to `npm` it also automatically opens a pull request on all 30 sites with the updated `npm` pacakge.
+A concrete example would be you have 30 [VitePress](https://vitepress.dev/) sites that rely on a [custom theme](https://vitepress-theme-default-plus.lando.dev/). When that custom theme pushes a new stable release to `npm` it also automatically opens a pull request on all 30 sites with the updated `npm` pacakge.
 
 In this way it is _sorta_ like `dependapot` except that the source repo **pushes** updates to its dependents as opposed to the dependent periodically looking for upstream updates.
 

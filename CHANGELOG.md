@@ -1,3 +1,7 @@
+## v3.0.0 - [February 8, 2024](https://github.com/lando/auto-deploy-action/releases/tag/v3.0.0)
+
+* Rebased on `npm` as the default `manager`
+
 ## v2.0.5 - [June 17, 2023](https://github.com/lando/auto-deploy-action/releases/tag/v2.0.5)
 
 * Switched release flow over to [@lando/prepare-release-action](https://github.com/lando/prepare-release-action)

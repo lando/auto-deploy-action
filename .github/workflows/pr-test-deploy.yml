@@ -5,13 +5,13 @@ on:
 
 jobs:
   test-pr-update:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
         node-version:
-          - '14'
+          - '18'
         auto-deploy-repos:
           - lando/auto-deploy-action
     steps:
@@ -29,16 +29,16 @@ jobs:
           # Test things
           pr-base: main
           registry: github
-          args: --dev
+          args: -D
 
   test-direct-update:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
         node-version:
-          - '14'
+          - '18'
         auto-deploy-repos:
           - lando/auto-deploy-action
     steps:
@@ -55,6 +55,6 @@ jobs:
           slug: ${{ matrix.auto-deploy-repos }}
           # Test things
           registry: github
-          args: --dev
+          args: -D
           pr: false
           deploy: false

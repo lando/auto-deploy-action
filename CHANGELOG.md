@@ -1,5 +1,7 @@
 ## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
 
+## v3.1.0 - [June 7, 2025](https://github.com/lando/auto-deploy-action/releases/tag/v3.1.0)
+
 * Added support for `bun` package manager
 * Added `auto` detection of `manager` and set as the default
 

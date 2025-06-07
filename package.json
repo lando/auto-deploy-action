@@ -22,7 +22,7 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@lando/auto-deploy-action": "lando/auto-deploy-action#main",
+    "@lando/auto-deploy-action": "github:lando/auto-deploy-action#refs/pull/20/merge",
     "auto-deploy-action": "lando/auto-deploy-action"
   }
 }

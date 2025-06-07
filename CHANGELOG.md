@@ -1,3 +1,5 @@
+## {{ UNRELEASED_VERSION }} - [{{ UNRELEASED_DATE }}]({{ UNRELEASED_LINK }})
+
 ## v3.0.0 - [February 8, 2024](https://github.com/lando/auto-deploy-action/releases/tag/v3.0.0)
 
 * Rebased on `npm` as the default `manager`

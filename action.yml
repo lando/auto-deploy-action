@@ -27,7 +27,7 @@ inputs:
   manager:
     description: "The package manager to use."
     required: false
-    default: npm
+    default: auto
   package:
     description: "The name of the package."
     required: false

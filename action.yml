@@ -192,7 +192,7 @@ runs:
               else
                 PKGMGR="npm"
               fi
-            elif
+            else
               PKGMGR="${{ inputs.manager }}"
             fi
 
@@ -206,11 +206,12 @@ runs:
             echo "Updating $PKGDIR/package.json with $PKGMGR to ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} with ${{ inputs.args }}"
             if [ "$PKGMGR" == "bun" ]; then
               bun add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
-            if [ "$PKGMGR" == "yarn" ]; then
-              yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
             elif [ "$PKGMGR" == "npm" ]; then
               npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+            elif [ "$PKGMGR" == "yarn" ]; then
+              yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
             fi
+
             cd "${{ github.workspace }}/auto-deploy-action-tmp"
           done
         echo "::endgroup::"

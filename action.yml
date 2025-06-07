@@ -86,13 +86,6 @@ runs:
         fi
         echo "::endgroup::"
 
-        echo "::group::Ensure ${{ inputs.manager }} is installed"
-        if ! command -v ${{ inputs.manager }} &> /dev/null; then
-          echo "::error title=Package manager does not exist!::You must ensure the underlying package manager ${{ inputs.manager }} is installed."
-          exit 48
-        fi
-        echo "::endgroup::"
-
     - name: Set outputs
       shell: bash
       id: auto-deploy-action
@@ -185,10 +178,37 @@ runs:
           for DIR in "${DIRS[@]}"; do
             PKGDIR="${{ github.workspace }}/auto-deploy-action-tmp/$DIR"
             cd "$PKGDIR"
-            echo "Updating $PKGDIR/package.json with ${{ inputs.manager }} to ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} with ${{ inputs.args }}"
-            if [ "${{ inputs.manager }}" == "yarn" ]; then
+
+            # auto detect manager
+            if [ "${{ inputs.manager }}" == "auto" ]; then
+              if [[ -f "bun.lock" ]]; then
+                PKGMGR="bun"
+              elif [[ -f "bunb.lock" ]]; then
+                PKGMGR="bun"
+              elif [[ -f "package-lock.json" ]]; then
+                PKGMGR="npm"
+              elif [[ -f "yarn.lock" ]]; then
+                PKGMGR="yarn"
+              else
+                PKGMGR="npm"
+              fi
+            elif
+              PKGMGR="${{ inputs.manager }}"
+            fi
+
+            echo "::group::Ensure $PKGMGR is installed"
+            if ! command -v "$PKGMGR" &> /dev/null; then
+              echo "::error title=Package manager does not exist!::You must ensure the underlying package manager $PKGMGR is installed."
+              exit 48
+            fi
+            echo "::endgroup::"
+
+            echo "Updating $PKGDIR/package.json with $PKGMGR to ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} with ${{ inputs.args }}"
+            if [ "$PKGMGR" == "bun" ]; then
+              bun add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
+            if [ "$PKGMGR" == "yarn" ]; then
               yarn add ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
-            elif [ "${{ inputs.manager }}" == "npm" ]; then
+            elif [ "$PKGMGR" == "npm" ]; then
               npm install ${{ steps.auto-deploy-action.outputs.package }}${{ steps.auto-deploy-action.outputs.separator }}${{ steps.auto-deploy-action.outputs.version }} ${{ inputs.args }}
             fi
             cd "${{ github.workspace }}/auto-deploy-action-tmp"

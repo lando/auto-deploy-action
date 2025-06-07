@@ -10,7 +10,7 @@ It currently comes with the following caveats:
 
 #### Caveats
 
-* Only works with `yarn` and `npm` as package managers (would love to add support for `composer`, `pip` etc)
+* Only works with `bun`, `npm` and `yarn` as package managers (would love to add support for `composer`, `pip` etc)
 * Only works with `npm`, `yarn` and `github` as "upstream" registries
 * Only works `GitHub` repo to `GitHub` repo
 * User is responsible for installing any underlying deps (eg `node` and `yarn`) required by this action
@@ -32,7 +32,7 @@ These keys are set to sane defaults but can be modified as needed.
 | `args` | Extra options to pass into the manager update command. | "" | `--dev` |
 | `branch` | The branch to deploy the updated package to. | Automatically created. If `pr` is `false` then the Default branch for `slug`. | `master` |
 | `dirs` | The dirs containing a package.json to update. | `./` | `./,./subdir1,./subdir2` |
-| `manager` | The package manager to use for updating. | `npm` | `yarn` \| `npm` |
+| `manager` | The package manager to use for updating. | `auto` | `bun` \| `yarn` \| `npm` |
 | `package` | The name of the package to update. | Set based on `registry` | `@lando/php` |
 | `pr` | Open a pull request with the change. | `true` | `false` |
 | `pr-base` | The base branch to open the PR against. | `main` | `master` |
@@ -40,6 +40,9 @@ These keys are set to sane defaults but can be modified as needed.
 | `separator` | The character that separates the `package` and `version` in the package manager update command  | Set based on `registry` | `@` |
 | `token` | [GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with permission to `read/write` to target `slug` | `${{ github.token }}`. | `MYTOKEN` |
 | `version` | The version of the package to update to. | Set based on `registry` | `1.3.2` |
+
+> [!NOTE]
+> The `manager` setting defaults to `auto`, using the first lockfile it finds. To avoid ambiguity, don’t mix lockfiles (e.g., package-lock.json and yarn.lock). If you must keep multiple lockfiles, set `manager` explicitly.
 
 ## Testing Inputs
 

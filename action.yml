@@ -181,22 +181,29 @@ runs:
 
             # auto detect manager
             if [ "${{ inputs.manager }}" == "auto" ]; then
+              echo "::group::Detecting package manager"
               if [[ -f "bun.lock" ]]; then
                 PKGMGR="bun"
+                echo "Found bun.lock, using $PKGMGR"
               elif [[ -f "bunb.lock" ]]; then
                 PKGMGR="bun"
+                echo "Found bunb.lock, using $PKGMGR"
               elif [[ -f "package-lock.json" ]]; then
                 PKGMGR="npm"
+                echo "Found package-lock.json, using $PKGMGR"
               elif [[ -f "yarn.lock" ]]; then
                 PKGMGR="yarn"
+                echo "Found yarn.lock, using $PKGMGR"
               else
                 PKGMGR="npm"
+                echo "Could not find any lockfiles, using $PKGMGR"
               fi
+              echo "::endgroup::"
             else
               PKGMGR="${{ inputs.manager }}"
             fi
 
-            echo "::group::Ensure $PKGMGR is installed"
+            echo "::group::Ensuring $PKGMGR is installed"
             if ! command -v "$PKGMGR" &> /dev/null; then
               echo "::error title=Package manager does not exist!::You must ensure the underlying package manager $PKGMGR is installed."
               exit 48
